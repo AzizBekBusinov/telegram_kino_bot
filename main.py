@@ -3,9 +3,32 @@ import random
 import json
 import os
 from telegram import Update, InputMediaVideo
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes, Application
 
 CHANNELS_FILE = "channels.json"
+# Token va URL
+TOKEN = os.getenv("API_TOKEN")
+WEBHOOK_URL = os.getenv("https://telegram-kino-bot.onrender.com/webhook")
+
+
+# /start komandasi
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Salom! Webhook orqali ishlayapman 😊")
+
+def main():
+    # Botni yaratish
+    application = Application.builder().token(BOT_TOKEN).build()
+
+    # Handler qo‘shamiz
+    application.add_handler(CommandHandler("start", start))
+
+    # Webhookni ishga tushiramiz
+    application.run_webhook(
+        listen="0.0.0.0",
+        port=int(os.environ.get("PORT", 8000)),  # Render.com portni o'zi beradi
+        webhook_url=WEBHOOK_URL,
+        allowed_updates=Update.ALL_TYPES
+    )
 
 # Logger sozlamasi
 logging.basicConfig(level=logging.INFO)
